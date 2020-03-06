@@ -1,0 +1,24 @@
+# Environment
+.env
+
+# Dependencies
+node_modules
+
+# Intellij
+.idea
+*.iml
+
+# OS malarky
+.DS_Store
+Thumbs.db
+
+# Built files
+lib
+
+# Coverage
+coverage
+
+# Other unwanted directories
+pids
+tmp
+temp
