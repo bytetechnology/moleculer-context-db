@@ -1,10 +1,4 @@
 import { MikroORM } from 'mikro-orm';
-import {
-  EntityClass,
-  EntityClassGroup,
-  AnyEntity
-} from 'mikro-orm/dist/typings';
-import { EntitySchema } from 'mikro-orm/dist/schema';
 import DatabaseConnector from './database.connector';
 
 class MikroConnector extends DatabaseConnector {
@@ -15,11 +9,7 @@ class MikroConnector extends DatabaseConnector {
     dbName: string,
     url: string,
     migrationPath: string,
-    entities: (
-      | EntityClass<AnyEntity>
-      | EntityClassGroup<AnyEntity>
-      | EntitySchema<any>
-    )[]
+    entities: any[]
   ): Promise<void | Error> {
     try {
       this.orm = await MikroORM.init({

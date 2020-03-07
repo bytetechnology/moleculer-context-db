@@ -45,7 +45,7 @@
     }
   },
   "dependencies": {
-    "mikro-orm": "^3.3.5",
+    "mikro-orm": "3.3.5",
     "moleculer": "0.14.3"
   },
   "devDependencies": {
