@@ -27,7 +27,7 @@ CommonJS
 const {
   MikroConnector,
   DatabaseContextManager
-} = require('winston-gelf-transporter');
+} = require('moleculer-context-db');
 ``` 
 
 ### Configuration 
