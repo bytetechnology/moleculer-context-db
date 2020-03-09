@@ -1,7 +1,8 @@
 moleculer-context-db
 ========================
 A database integrator for injecting a transaction safe database session into the
-context of the action.
+context of the action. Currently, this only has built in support for Mikro-ORM
+
 
 ## Setup
 
