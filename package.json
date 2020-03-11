@@ -1,6 +1,6 @@
 {
   "name": "moleculer-context-db",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A database tool for providing the database session as part of the context",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -45,8 +45,8 @@
     }
   },
   "dependencies": {
-    "mikro-orm": "3.3.5",
-    "moleculer": "0.14.3"
+    "mikro-orm": "^3.3.5",
+    "moleculer": "^0.14.3"
   },
   "devDependencies": {
     "@types/jest": "25.1.3",
