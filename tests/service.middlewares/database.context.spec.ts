@@ -1,8 +1,8 @@
 import { Service, ActionSchema, ServiceBroker } from 'moleculer';
 import * as uuid from 'uuid';
-import DatabaseContextManager from '../../service.middlewares/database.context';
-import MikroConnector from '../../service.databases/mikro.connector';
-import MoleculerMikroContext from '../../service.databases/moleculer.mikro.context';
+import DatabaseContextManager from '../../src/service.middlewares/database.context';
+import MikroConnector from '../../src/service.databases/mikro.connector';
+import MoleculerMikroContext from '../../src/service.databases/moleculer.mikro.context';
 import TestEntity from '../test.entity';
 
 describe('DatabaseContext', () => {
@@ -22,13 +22,14 @@ describe('DatabaseContext', () => {
     };
     beforeAll(async done => {
       connector = new MikroConnector();
-      await connector.init(
-        'sqlite',
-        'test_sqlite_db',
-        ':memory:',
-        './',
-        [TestEntity]
-      );
+      await connector.init({
+        type: 'sqlite',
+        dbName: ':memory:',
+        entities: [TestEntity],
+        cache: {
+          enabled: false
+        }
+      });
       DatabaseContextManager.setDatabaseConnector(connector);
       spy = jest.spyOn(connector.getORM().em, 'fork');
       const generator = connector.getORM().getSchemaGenerator();

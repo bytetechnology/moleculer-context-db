@@ -1,28 +1,19 @@
-import { MikroORM } from 'mikro-orm';
+import {
+  Configuration,
+  IDatabaseDriver,
+  MikroORM,
+  Options
+} from 'mikro-orm';
 import DatabaseConnector from './database.connector';
 
 class MikroConnector extends DatabaseConnector {
   orm!: MikroORM;
 
-  async init(
-    dbType: 'postgresql' | 'sqlite' | 'mysql' | 'mongo',
-    dbName: string,
-    url: string,
-    migrationPath: string,
-    entities: any[]
+  async init<D extends IDatabaseDriver = IDatabaseDriver>(
+    options?: Options<D> | Configuration<D>
   ): Promise<void | Error> {
     try {
-      this.orm = await MikroORM.init({
-        entities,
-        type: dbType,
-        clientUrl: url,
-        dbName,
-        migrations: {
-          path: migrationPath,
-          transactional: true,
-          allOrNothing: true
-        }
-      });
+      this.orm = await MikroORM.init(options);
       return Promise.resolve();
     } catch (err) {
       return Promise.reject(err);
