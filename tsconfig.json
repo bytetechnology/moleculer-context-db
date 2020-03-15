@@ -10,6 +10,7 @@
     "sourceMap": true,
     "target": "es6",
     "baseUrl": "./",
+    "rootDir": "./src",
     "outDir": "lib",
     "declaration": true
   },

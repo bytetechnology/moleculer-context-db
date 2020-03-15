@@ -37,7 +37,8 @@
   "homepage": "https://github.com/bytetechnology/moleculer-context-db#readme",
   "dependencies": {
     "mikro-orm": "^3.4.1",
-    "moleculer": "^0.14.4"
+    "moleculer": "^0.14.4",
+    "uuid": "7.0.2"
   },
   "devDependencies": {
     "@types/jest": "25.1.4",
@@ -56,15 +57,14 @@
     "sqlite3": "4.1.1",
     "ts-jest": "25.2.1",
     "ts-node": "8.6.2",
-    "typescript": "3.8.3",
-    "uuid": "7.0.2"
+    "typescript": "3.8.3"
   },
   "jest": {
     "testEnvironment": "node",
     "rootDir": ".",
-    "coverageDirectory": "tests/coverage",
+    "coverageDirectory": "src/tests/coverage",
     "roots": [
-      "tests"
+      "src/tests"
     ],
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
