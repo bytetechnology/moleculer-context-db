@@ -6,10 +6,8 @@ import MoleculerMikroContext from '../../service.databases/moleculer.mikro.conte
 import TestEntity from '../test.entity';
 
 describe('DatabaseContext', () => {
-  test('DatabaseContextManager with no connector throws error', () => {
-    expect(DatabaseContextManager.middleware).toThrowError();
-  });
   describe('Middleware With Connector Set', () => {
+    let dbContextManager: DatabaseContextManager;
     let connector: MikroConnector;
     let spy: jest.SpyInstance;
     const broker = new ServiceBroker();
@@ -22,6 +20,7 @@ describe('DatabaseContext', () => {
     };
     beforeAll(async done => {
       connector = new MikroConnector();
+      dbContextManager = new DatabaseContextManager(connector);
       await connector.init({
         type: 'sqlite',
         dbName: ':memory:',
@@ -30,7 +29,6 @@ describe('DatabaseContext', () => {
           enabled: false
         }
       });
-      DatabaseContextManager.setDatabaseConnector(connector);
       spy = jest.spyOn(connector.getORM().em, 'fork');
       const generator = connector.getORM().getSchemaGenerator();
       await generator.dropSchema();
@@ -45,17 +43,19 @@ describe('DatabaseContext', () => {
     });
     test(`transactionWrapper() forks the entity manager
     and starts transaction`, async done => {
-      const transactionWrapper = DatabaseContextManager.middleware().localAction(
-        async function testContextForNewEntityManager(
-          this: Service,
-          ctx: MoleculerMikroContext
-        ) {
-          expect(spy).toHaveBeenCalledTimes(1);
-          expect(ctx.entityManager.isInTransaction()).toBeTruthy();
-          return Promise.resolve();
-        } as any,
-        {} as ActionSchema
-      );
+      const transactionWrapper = dbContextManager
+        .middleware()
+        .localAction(
+          async function testContextForNewEntityManager(
+            this: Service,
+            ctx: MoleculerMikroContext
+          ) {
+            expect(spy).toHaveBeenCalledTimes(1);
+            expect(ctx.entityManager.isInTransaction()).toBeTruthy();
+            return Promise.resolve();
+          } as any,
+          {} as ActionSchema
+        );
       await transactionWrapper(
         new MoleculerMikroContext(broker, endpoint)
       );
@@ -78,16 +78,18 @@ describe('DatabaseContext', () => {
         return done();
       });
       test(`all changes are made when there are no errors`, async done => {
-        const transactionWrapper = DatabaseContextManager.middleware().localAction(
-          function testChangesArePersisted(
-            this: Service,
-            ctx: MoleculerMikroContext
-          ) {
-            ctx.entityManager.persistLater(testEntity);
-            return Promise.resolve();
-          } as any,
-          {} as ActionSchema
-        );
+        const transactionWrapper = dbContextManager
+          .middleware()
+          .localAction(
+            function testChangesArePersisted(
+              this: Service,
+              ctx: MoleculerMikroContext
+            ) {
+              ctx.entityManager.persistLater(testEntity);
+              return Promise.resolve();
+            } as any,
+            {} as ActionSchema
+          );
         try {
           await transactionWrapper(
             new MoleculerMikroContext(broker, endpoint)
@@ -106,18 +108,20 @@ describe('DatabaseContext', () => {
         done();
       });
       test(`no changes are made when there are invalid changes`, async done => {
-        const transactionWrapper = DatabaseContextManager.middleware().localAction(
-          function testChangesArePersisted(
-            this: Service,
-            ctx: MoleculerMikroContext
-          ) {
-            ctx.entityManager.persistLater(testEntity);
-            const invalidTestEntity: TestEntity = new TestEntity();
-            ctx.entityManager.persistLater(invalidTestEntity);
-            return Promise.resolve();
-          } as any,
-          {} as ActionSchema
-        );
+        const transactionWrapper = dbContextManager
+          .middleware()
+          .localAction(
+            function testChangesArePersisted(
+              this: Service,
+              ctx: MoleculerMikroContext
+            ) {
+              ctx.entityManager.persistLater(testEntity);
+              const invalidTestEntity: TestEntity = new TestEntity();
+              ctx.entityManager.persistLater(invalidTestEntity);
+              return Promise.resolve();
+            } as any,
+            {} as ActionSchema
+          );
         try {
           await transactionWrapper(
             new MoleculerMikroContext(broker, endpoint)
@@ -132,16 +136,18 @@ describe('DatabaseContext', () => {
         done();
       });
       test(`no changes are made when the promise rejects`, async done => {
-        const transactionWrapper = DatabaseContextManager.middleware().localAction(
-          function testChangesArePersisted(
-            this: Service,
-            ctx: MoleculerMikroContext
-          ) {
-            ctx.entityManager.persistLater(testEntity);
-            return Promise.reject();
-          } as any,
-          {} as ActionSchema
-        );
+        const transactionWrapper = dbContextManager
+          .middleware()
+          .localAction(
+            function testChangesArePersisted(
+              this: Service,
+              ctx: MoleculerMikroContext
+            ) {
+              ctx.entityManager.persistLater(testEntity);
+              return Promise.reject();
+            } as any,
+            {} as ActionSchema
+          );
         const mikroContext = new MoleculerMikroContext(
           broker,
           endpoint

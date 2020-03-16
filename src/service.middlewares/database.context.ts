@@ -3,25 +3,24 @@ import { EntityManager } from 'mikro-orm';
 import MoleculerMikroContext from '../service.databases/moleculer.mikro.context';
 import DatabaseConnector from '../service.databases/database.connector';
 
-let databaseConnector: DatabaseConnector;
+class DatabaseContextManager {
+  databaseConnector: DatabaseConnector;
 
-const DatabaseContextManager = {
-  setDatabaseConnector(connector: DatabaseConnector): void {
-    databaseConnector = connector;
-  },
+  constructor(databaseConnector: DatabaseConnector) {
+    this.databaseConnector = databaseConnector;
+  }
+
+  // This returns a moleculer middleware which appends the entity manager to the
+  // context of the action call.
   middleware(): Middleware {
-    // This returns a moleculer middleware which appends the entity manager to the
-    // context of the action call.
-    if (!databaseConnector) {
-      throw new Error(`databaseConnector not assigned, did you call 
-      middleware() before calling setDatabaseConnector()?`);
-    }
+    const dbConnector: DatabaseConnector = this.databaseConnector;
+
     return {
       localAction(handler: any) {
         return async function wrapActionWithTransaction(
           ctx: Context
         ) {
-          const entityManager: EntityManager = databaseConnector.getORM()
+          const entityManager: EntityManager = dbConnector.getORM()
             .em;
           const transactionResult = await entityManager.transactional(
             (em: EntityManager) => {
@@ -45,6 +44,6 @@ const DatabaseContextManager = {
       }
     };
   }
-};
+}
 
 export default DatabaseContextManager;
