@@ -1,17 +1,18 @@
-moleculer-context-db
-========================
-A database integrator for injecting a transaction safe database session into the
-context of the action. Currently, this only has built in support for Mikro-ORM
+# moleculer-context-db
 
+A database integrator for injecting a transaction safe database session into the
+context of the action. Currently, this only has built in support for [Mikro-ORM](https://mikro-orm.io/)
 
 ## Setup
 
 ### Installation
 
 To install with npm
+
 ```shell script
 npm install moleculer-context-db
 ```
+
 ### Importing
 
 ES6 style
@@ -24,47 +25,50 @@ import {
 ```
 
 CommonJS
+
 ```js
 const {
   MikroConnector,
   DatabaseContextManager
 } = require('moleculer-context-db');
-``` 
+```
 
-### Configuration 
+### Configuration
 
 You can create a new MikroConnector as such
+
 ```js
 const connector = new MikroConnector();
 ```
 
 You will then need to initialize the connector
+
 ```js
-const databaseType = 'mongodb';
-const databaseName = 'database-name';
-const databaseUrl = 'mongodb://localhost:27017';
-const mikroOrmEntities = [YourEntity1, YourEntity2];
-await connector.init(
-  databaseType,
-  databaseName,
-  url,
-  './path/to/migrations/from/cwd',
-  mikroOrmEntities
-)
+await connector.init({
+  type: 'sqlite',
+  dbName: ':memory',
+  entities: [YourEntity1, YourEntity2],
+  cache: {
+    enabled: false
+  }
+});
 ```
+
+You can use all available options for MikroORM.init()
 
 ## Usage
 
-To use, simply add your connector to the DatabaseContextManager and then add
+To use, simply instantiate a DatabaseContextManager with the connector and then add
 the result of the middleware method to your broker's middleware
 
 ```javascript
-
-DatabaseContextManager.setDatabaseConnector(connector);
+const dbContextManager: DatabaseContextManager = new DatabaseContextManager(
+  connector
+);
 
 yourMoleculerBroker.middlewares.add(
   DatabaseContextManager.middleware()
 );
-
 ```
-The above statement will wrap all local actions with a Mikro ORM transaction.
+
+The above statement will wrap all local actions with a Mikro-ORM transaction.
