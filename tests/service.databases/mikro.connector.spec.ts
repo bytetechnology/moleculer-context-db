@@ -1,4 +1,4 @@
-import MikroConnector from '../../service.databases/mikro.connector';
+import MikroConnector from '../../src/service.databases/mikro.connector';
 
 describe('MikroConnector', () => {
   test('it throws an error on init with invalid dbType', async done => {

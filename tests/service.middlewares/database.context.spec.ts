@@ -1,8 +1,8 @@
 import { Service, ActionSchema, ServiceBroker } from 'moleculer';
 import * as uuid from 'uuid';
-import DatabaseContextManager from '../../service.middlewares/database.context';
-import MikroConnector from '../../service.databases/mikro.connector';
-import MoleculerMikroContext from '../../service.databases/moleculer.mikro.context';
+import DatabaseContextManager from '../../src/service.middlewares/database.context';
+import MikroConnector from '../../src/service.databases/mikro.connector';
+import MoleculerMikroContext from '../../src/service.databases/moleculer.mikro.context';
 import TestEntity from '../test.entity';
 
 describe('DatabaseContext', () => {
