@@ -6,21 +6,23 @@ import {
 } from 'mikro-orm';
 import DatabaseConnector from './database.connector';
 
-class MikroConnector extends DatabaseConnector {
-  orm!: MikroORM;
+class MikroConnector<
+  D extends IDatabaseDriver = IDatabaseDriver
+> extends DatabaseConnector {
+  orm!: MikroORM<D>;
 
-  async init<D extends IDatabaseDriver = IDatabaseDriver>(
+  async init(
     options?: Options<D> | Configuration<D>
   ): Promise<void | Error> {
     try {
-      this.orm = await MikroORM.init(options);
+      this.orm = await MikroORM.init<D>(options);
       return Promise.resolve();
     } catch (err) {
       return Promise.reject(err);
     }
   }
 
-  getORM(): MikroORM {
+  getORM(): MikroORM<D> {
     return this.orm;
   }
 }

@@ -3,7 +3,7 @@ import * as uuid from 'uuid';
 import DatabaseContextManager from '../../src/service.middlewares/database.context';
 import MikroConnector from '../../src/service.databases/mikro.connector';
 import MoleculerMikroContext from '../../src/service.databases/moleculer.mikro.context';
-import TestEntity from '../test.entity';
+import TestEntity from '../entities/sql/test.entity';
 
 describe('DatabaseContext', () => {
   describe('Middleware With Connector Set', () => {
