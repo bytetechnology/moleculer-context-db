@@ -1,7 +1,7 @@
 # moleculer-context-db
 
 A database integrator for injecting a transaction safe database session into the
-context of the action. Currently, this only has built in support for [Mikro-ORM](https://mikro-orm.io/)
+context of the action. Currently, this only has built in support for [Mikro-ORM](https://mikro-orm.io/), and in that only SQL databases have been tested. Mongo support is experimental.
 
 ## Setup
 
@@ -41,11 +41,19 @@ You can create a new MikroConnector as such
 const connector = new MikroConnector();
 ```
 
+For mongo support, you will need to do:
+
+```js
+import {MongoDriver} from 'mikro-orm/dist/drivers/MongoDriver';
+
+const connector = new MikroConnector<MongoDriver>();
+```
+
 You will then need to initialize the connector
 
 ```js
 await connector.init({
-  type: 'sqlite',
+  type: 'sqlite', // or use 'mongo' for mongodb
   dbName: ':memory',
   entities: [YourEntity1, YourEntity2],
   cache: {
