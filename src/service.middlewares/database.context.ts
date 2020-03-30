@@ -70,14 +70,9 @@ class DatabaseContextManager {
               .em as EntityManager<MongoDriver>;
             const moleculerMikroCtx = ctx as MoleculerMikroContext;
             moleculerMikroCtx.entityManager = em.fork();
-            return handler(moleculerMikroCtx)
-              .then((handlerResult: any) => {
-                return handlerResult;
-              })
-              .catch((err: Error) => {
-                ctx.broker.logger.error('MikroORM error:', err);
-                throw err;
-              });
+            return handler(moleculerMikroCtx).then((handlerResult: any) => {
+              return handlerResult;
+            });
           };
         }
 
