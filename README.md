@@ -18,10 +18,7 @@ npm install moleculer-context-db
 ES6 style
 
 ```js
-import {
-  MikroConnector,
-  DatabaseContextManager
-} from 'moleculer-context-db';
+import { MikroConnector, DatabaseContextManager } from 'moleculer-context-db';
 ```
 
 CommonJS
@@ -62,6 +59,20 @@ await connector.init({
 });
 ```
 
+For mongo support, you will need to do:
+
+````js
+await connector.init({
+  type: 'mongo', // or use 'mongo' for mongodb
+  dbName: <name_of_db>,
+  clientUrl: <mongo_url>
+  entities: [YourEntity1, YourEntity2],
+  cache: {
+    enabled: false
+  },
+  implicitTransactions: <true/false> // needs to be true if you are running a replica set needing transaction support
+});```
+
 You can use all available options for MikroORM.init()
 
 ## Usage
@@ -77,6 +88,6 @@ const dbContextManager: DatabaseContextManager = new DatabaseContextManager(
 yourMoleculerBroker.middlewares.add(
   DatabaseContextManager.middleware()
 );
-```
+````
 
 The above statement will wrap all local actions with a Mikro-ORM transaction.

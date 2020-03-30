@@ -1,9 +1,4 @@
-import {
-  Configuration,
-  IDatabaseDriver,
-  MikroORM,
-  Options
-} from 'mikro-orm';
+import { Configuration, IDatabaseDriver, MikroORM, Options } from 'mikro-orm';
 import DatabaseConnector from './database.connector';
 
 class MikroConnector<
@@ -11,9 +6,7 @@ class MikroConnector<
 > extends DatabaseConnector {
   orm!: MikroORM<D>;
 
-  async init(
-    options?: Options<D> | Configuration<D>
-  ): Promise<void | Error> {
+  async init(options?: Options<D> | Configuration<D>): Promise<void | Error> {
     try {
       this.orm = await MikroORM.init<D>(options);
       return Promise.resolve();

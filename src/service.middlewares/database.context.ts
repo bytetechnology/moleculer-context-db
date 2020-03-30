@@ -1,5 +1,6 @@
 import { Middleware, Context } from 'moleculer';
 import { EntityManager } from 'mikro-orm';
+import { MongoDriver } from 'mikro-orm/dist/drivers/MongoDriver';
 import MoleculerMikroContext from '../service.databases/moleculer.mikro.context';
 import DatabaseConnector from '../service.databases/database.connector';
 
@@ -17,11 +18,29 @@ class DatabaseContextManager {
 
     return {
       localAction(handler: any) {
-        return async function wrapActionWithTransaction(
-          ctx: Context
+        // use a forked entity manager for dealing with mongo unless implicitTransactions is set to true
+        if (
+          dbConnector.getORM().config.get('type') === 'mongo' &&
+          !dbConnector.getORM().config.get('implicitTransactions')
         ) {
-          const entityManager: EntityManager = dbConnector.getORM()
-            .em;
+          return function wrapActionWithMongoCommit(ctx: Context) {
+            const em: EntityManager<MongoDriver> = dbConnector.getORM()
+              .em as EntityManager<MongoDriver>;
+            const moleculerMikroCtx = ctx as MoleculerMikroContext;
+            moleculerMikroCtx.entityManager = em.fork();
+            return handler(moleculerMikroCtx)
+              .then((handlerResult: any) => {
+                return handlerResult;
+              })
+              .catch((err: Error) => {
+                ctx.broker.logger.error('MikroORM error:', err);
+                throw err;
+              });
+          };
+        }
+
+        return async function wrapActionWithTransaction(ctx: Context) {
+          const entityManager: EntityManager = dbConnector.getORM().em;
           const transactionResult = await entityManager.transactional(
             (em: EntityManager) => {
               const moleculerMikroCtx = ctx as MoleculerMikroContext;
@@ -31,10 +50,7 @@ class DatabaseContextManager {
                   return handlerResult;
                 })
                 .catch((err: Error) => {
-                  ctx.broker.logger.error(
-                    'Could not commit data changes, error:',
-                    err
-                  );
+                  ctx.broker.logger.error('MikroORM error:', err);
                   throw err;
                 });
             }
@@ -44,9 +60,24 @@ class DatabaseContextManager {
       },
 
       localEvent(handler: any) {
+        // use a forked entity manager for dealing with mongo unless implicitTransactions is set to true
+        if (
+          dbConnector.getORM().config.get('type') === 'mongo' &&
+          !dbConnector.getORM().config.get('implicitTransactions')
+        ) {
+          return function wrapEventWithMongoCommit(ctx: Context) {
+            const em: EntityManager<MongoDriver> = dbConnector.getORM()
+              .em as EntityManager<MongoDriver>;
+            const moleculerMikroCtx = ctx as MoleculerMikroContext;
+            moleculerMikroCtx.entityManager = em.fork();
+            return handler(moleculerMikroCtx).then((handlerResult: any) => {
+              return handlerResult;
+            });
+          };
+        }
+
         return async function wrapEventWithTransaction(ctx: Context) {
-          const entityManager: EntityManager = dbConnector.getORM()
-            .em;
+          const entityManager: EntityManager = dbConnector.getORM().em;
           const transactionResult = await entityManager.transactional(
             (em: EntityManager) => {
               const moleculerMikroCtx = ctx as MoleculerMikroContext;
@@ -56,10 +87,7 @@ class DatabaseContextManager {
                   return handlerResult;
                 })
                 .catch((err: Error) => {
-                  ctx.broker.logger.error(
-                    'Could not commit data changes, error:',
-                    err
-                  );
+                  ctx.broker.logger.error('MikroORM error:', err);
                   throw err;
                 });
             }
