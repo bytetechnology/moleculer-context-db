@@ -61,7 +61,7 @@ await connector.init({
 
 For mongo support, you will need to do:
 
-````js
+```js
 await connector.init({
   type: 'mongo', // or use 'mongo' for mongodb
   dbName: <name_of_db>,
@@ -71,7 +71,8 @@ await connector.init({
     enabled: false
   },
   implicitTransactions: <true/false> // needs to be true if you are running a replica set needing transaction support
-});```
+});
+```
 
 You can use all available options for MikroORM.init()
 
@@ -85,9 +86,7 @@ const dbContextManager: DatabaseContextManager = new DatabaseContextManager(
   connector
 );
 
-yourMoleculerBroker.middlewares.add(
-  DatabaseContextManager.middleware()
-);
-````
+yourMoleculerBroker.middlewares.add(DatabaseContextManager.middleware());
+```
 
 The above statement will wrap all local actions with a Mikro-ORM transaction.
