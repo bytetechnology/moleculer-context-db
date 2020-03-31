@@ -10,7 +10,7 @@ import { ObjectId } from 'mongodb';
 @Entity()
 export default class TestEntity implements MongoEntity<TestEntity> {
   @PrimaryKey()
-  _id: ObjectId;
+  _id!: ObjectId;
 
   @SerializedPrimaryKey()
   id!: string;

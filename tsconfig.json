@@ -4,6 +4,7 @@
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "module": "commonjs",
+    "strict": true,
     "moduleResolution": "node",
     "pretty": true,
     "types": ["jest", "node"],

@@ -77,7 +77,7 @@ class Sample extends moleculer.Service {
   })
   async 'sample.testEntityEvent'(ctx: MoleculerMikroContext<{ name: string }>) {
     this.logger.info(
-      `Got event ${ctx.event.name} from sender ${ctx.nodeID}; id: ${ctx.params.name}`
+      `Got event from sender ${ctx.nodeID}; id: ${ctx.params.name}`
     );
     const em = ctx.entityManager;
     const entity = await em.findOne<TestEntity>(TestEntity, {
