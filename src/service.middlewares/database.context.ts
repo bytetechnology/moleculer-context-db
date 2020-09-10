@@ -23,36 +23,39 @@ class DatabaseContextManager {
           dbConnector.getORM().config.get('type') === 'mongo' &&
           !dbConnector.getORM().config.get('implicitTransactions')
         ) {
-          return function wrapActionWithMongoCommit(ctx: Context) {
+          return async function wrapActionWithMongoCommit(ctx: Context) {
             const em: EntityManager<MongoDriver> = dbConnector.getORM()
               .em as EntityManager<MongoDriver>;
+
+            // inject a forked EntityManager into the moleculer context
             const moleculerMikroCtx = ctx as MoleculerMikroContext;
             moleculerMikroCtx.entityManager = em.fork();
-            return handler(moleculerMikroCtx)
-              .then((handlerResult: any) => {
-                return handlerResult;
-              })
-              .catch((err: Error) => {
-                ctx.broker.logger.error('MikroORM error:', err);
-                throw err;
-              });
+
+            // call the handler
+            const handlerResult = await handler(moleculerMikroCtx);
+
+            // flush the entity manager
+            await moleculerMikroCtx.entityManager.flush();
+
+            // return handler result
+            return handlerResult;
           };
         }
 
         return async function wrapActionWithTransaction(ctx: Context) {
           const entityManager: EntityManager = dbConnector.getORM().em;
+          // we are intransactional more, so use the em.transactional which will inject a forked EntityManager and then flush at end
           const transactionResult = await entityManager.transactional(
-            (em: EntityManager) => {
+            async (em: EntityManager) => {
+              // inject the forked EntityManger into moleculer context
               const moleculerMikroCtx = ctx as MoleculerMikroContext;
-              moleculerMikroCtx.entityManager = em;
-              return handler(moleculerMikroCtx)
-                .then((handlerResult: any) => {
-                  return handlerResult;
-                })
-                .catch((err: Error) => {
-                  ctx.broker.logger.error('MikroORM error:', err);
-                  throw err;
-                });
+              moleculerMikroCtx.entityManager = em; // already forked
+
+              // call handler
+              const handlerResult = await handler(moleculerMikroCtx);
+
+              // return handler result
+              return handlerResult;
             }
           );
           return transactionResult;
@@ -65,31 +68,39 @@ class DatabaseContextManager {
           dbConnector.getORM().config.get('type') === 'mongo' &&
           !dbConnector.getORM().config.get('implicitTransactions')
         ) {
-          return function wrapEventWithMongoCommit(ctx: Context) {
+          return async function wrapEventWithMongoCommit(ctx: Context) {
             const em: EntityManager<MongoDriver> = dbConnector.getORM()
               .em as EntityManager<MongoDriver>;
+
+            // inject a forked EntityManager into the moleculer context
             const moleculerMikroCtx = ctx as MoleculerMikroContext;
             moleculerMikroCtx.entityManager = em.fork();
-            return handler(moleculerMikroCtx).then((handlerResult: any) => {
-              return handlerResult;
-            });
+
+            // call the handler
+            const handlerResult = await handler(moleculerMikroCtx);
+
+            // flush the entity manager
+            await moleculerMikroCtx.entityManager.flush();
+
+            // return handler result
+            return handlerResult;
           };
         }
 
         return async function wrapEventWithTransaction(ctx: Context) {
           const entityManager: EntityManager = dbConnector.getORM().em;
+          // we are intransactional more, so use the em.transactional which will inject a forked EntityManager and then flush at end
           const transactionResult = await entityManager.transactional(
-            (em: EntityManager) => {
+            async (em: EntityManager) => {
+              // inject the forked EntityManger into moleculer context
               const moleculerMikroCtx = ctx as MoleculerMikroContext;
-              moleculerMikroCtx.entityManager = em;
-              return handler(moleculerMikroCtx)
-                .then((handlerResult: any) => {
-                  return handlerResult;
-                })
-                .catch((err: Error) => {
-                  ctx.broker.logger.error('MikroORM error:', err);
-                  throw err;
-                });
+              moleculerMikroCtx.entityManager = em; // already forked
+
+              // call handler
+              const handlerResult = await handler(moleculerMikroCtx);
+
+              // return handler result
+              return handlerResult;
             }
           );
           return transactionResult;

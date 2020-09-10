@@ -89,7 +89,8 @@ describe('DatabaseContext', () => {
           await transactionWrapper(new MoleculerMikroContext(broker, endpoint));
           const localTestEntity: TestEntity | null = await connector
             .getORM()
-            .em.findOne(TestEntity, { name: testEntityName });
+            .em.fork()
+            .findOne(TestEntity, { name: testEntityName });
           if (localTestEntity !== null) {
             expect(localTestEntity.uuid).toEqual(localUuid);
           } else {
@@ -120,7 +121,8 @@ describe('DatabaseContext', () => {
         }
         const fetchedTestEntity: TestEntity | null = await connector
           .getORM()
-          .em.findOne(TestEntity, { name: testEntityName });
+          .em.fork()
+          .findOne(TestEntity, { name: testEntityName });
         expect(fetchedTestEntity).toBeNull();
         done();
       });
@@ -136,17 +138,13 @@ describe('DatabaseContext', () => {
           {} as ActionSchema
         );
         const mikroContext = new MoleculerMikroContext(broker, endpoint);
-        const errorLogSpy = jest.spyOn(mikroContext.broker.logger, 'error');
-        try {
-          await transactionWrapper(mikroContext);
-        } catch (e) {
-          expect(e).toBeTruthy();
-        }
+        expect(transactionWrapper(mikroContext)).rejects.toThrow();
+
         const fetchedTestEntity: TestEntity | null = await connector
           .getORM()
-          .em.findOne(TestEntity, { name: testEntityName });
+          .em.fork()
+          .findOne(TestEntity, { name: testEntityName });
         expect(fetchedTestEntity).toBeNull();
-        expect(errorLogSpy).toHaveBeenCalledTimes(1);
         done();
       });
     });
@@ -181,7 +179,8 @@ describe('DatabaseContext', () => {
           await transactionWrapper(new MoleculerMikroContext(broker, endpoint));
           const localTestEntity: TestEntity | null = await connector
             .getORM()
-            .em.findOne(TestEntity, { name: testEntityName });
+            .em.fork()
+            .findOne(TestEntity, { name: testEntityName });
           if (localTestEntity !== null) {
             expect(localTestEntity.uuid).toEqual(localUuid);
           } else {
@@ -212,7 +211,8 @@ describe('DatabaseContext', () => {
         }
         const fetchedTestEntity: TestEntity | null = await connector
           .getORM()
-          .em.findOne(TestEntity, { name: testEntityName });
+          .em.fork()
+          .findOne(TestEntity, { name: testEntityName });
         expect(fetchedTestEntity).toBeNull();
         done();
       });
@@ -228,17 +228,15 @@ describe('DatabaseContext', () => {
           {} as ActionSchema
         );
         const mikroContext = new MoleculerMikroContext(broker, endpoint);
-        const errorLogSpy = jest.spyOn(mikroContext.broker.logger, 'error');
-        try {
-          await transactionWrapper(mikroContext);
-        } catch (e) {
-          expect(e).toBeTruthy();
-        }
+
+        expect(transactionWrapper(mikroContext)).rejects.toThrow();
+
         const fetchedTestEntity: TestEntity | null = await connector
           .getORM()
-          .em.findOne(TestEntity, { name: testEntityName });
+          .em.fork()
+          .findOne(TestEntity, { name: testEntityName });
         expect(fetchedTestEntity).toBeNull();
-        expect(errorLogSpy).toHaveBeenCalledTimes(2);
+
         done();
       });
     });
