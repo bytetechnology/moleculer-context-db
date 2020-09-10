@@ -38,12 +38,20 @@ You can create a new MikroConnector as such
 const connector = new MikroConnector();
 ```
 
-For mongo support, you will need to do:
+You will also need to install the appropriate database driver, e.g.:
 
 ```js
-import {MongoDriver} from 'mikro-orm/dist/drivers/MongoDriver';
+import {MongoDriver} from '@mikro-orm/mongodb';
 
 const connector = new MikroConnector<MongoDriver>();
+```
+
+or
+
+```js
+npm i @mikro-orm/sqlite;
+
+const connector = new MikroConnector();
 ```
 
 You will then need to initialize the connector
