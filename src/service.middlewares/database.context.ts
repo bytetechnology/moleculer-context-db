@@ -29,9 +29,7 @@ class DatabaseContextManager {
             const moleculerMikroCtx = ctx as MoleculerMikroContext;
             moleculerMikroCtx.entityManager = em.fork();
             return handler(moleculerMikroCtx)
-              .then(async (handlerResult: any) => {
-                // flush to DB
-                await moleculerMikroCtx.entityManager.flush();
+              .then((handlerResult: any) => {
                 return handlerResult;
               })
               .catch((err: Error) => {
@@ -72,13 +70,9 @@ class DatabaseContextManager {
               .em as EntityManager<MongoDriver>;
             const moleculerMikroCtx = ctx as MoleculerMikroContext;
             moleculerMikroCtx.entityManager = em.fork();
-            return handler(moleculerMikroCtx).then(
-              async (handlerResult: any) => {
-                // flush to DB
-                await moleculerMikroCtx.entityManager.flush();
-                return handlerResult;
-              }
-            );
+            return handler(moleculerMikroCtx).then((handlerResult: any) => {
+              return handlerResult;
+            });
           };
         }
 
