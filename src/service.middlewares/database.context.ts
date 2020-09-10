@@ -1,6 +1,6 @@
 import { Middleware, Context } from 'moleculer';
-import { EntityManager } from 'mikro-orm';
-import { MongoDriver } from 'mikro-orm/dist/drivers/MongoDriver';
+import { EntityManager } from '@mikro-orm/core';
+import { MongoDriver } from '@mikro-orm/mongodb';
 import MoleculerMikroContext from '../service.databases/moleculer.mikro.context';
 import DatabaseConnector from '../service.databases/database.connector';
 
@@ -30,6 +30,8 @@ class DatabaseContextManager {
             moleculerMikroCtx.entityManager = em.fork();
             return handler(moleculerMikroCtx)
               .then((handlerResult: any) => {
+                // flush to DB
+                moleculerMikroCtx.entityManager.flush();
                 return handlerResult;
               })
               .catch((err: Error) => {
@@ -71,6 +73,8 @@ class DatabaseContextManager {
             const moleculerMikroCtx = ctx as MoleculerMikroContext;
             moleculerMikroCtx.entityManager = em.fork();
             return handler(moleculerMikroCtx).then((handlerResult: any) => {
+              // flush to DB
+              moleculerMikroCtx.entityManager.flush();
               return handlerResult;
             });
           };

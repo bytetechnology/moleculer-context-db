@@ -6,7 +6,7 @@
  */
 
 import { ServiceBroker, Service } from 'moleculer';
-import { MongoDriver } from 'mikro-orm/dist/drivers/MongoDriver';
+import { MongoDriver } from '@mikro-orm/mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import { DatabaseContextManager, MikroConnector } from '../../src';
@@ -23,7 +23,7 @@ describe('Mongo unit tests', () => {
 
   beforeAll(async done => {
     // create a new moleculer service broker
-    broker = new ServiceBroker({ logLevel: 'info' });
+    broker = new ServiceBroker({ logLevel: 'fatal' });
 
     // create an in-memory mongodb instance
     mongod = new MongoMemoryServer();
@@ -37,7 +37,6 @@ describe('Mongo unit tests', () => {
       dbName,
       clientUrl: uri,
       entities: [MongoTestEntity],
-      entitiesDirsTs: ['./tests/entities/mongo'],
       cache: {
         enabled: false
       }

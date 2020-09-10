@@ -1,4 +1,9 @@
-import { Configuration, IDatabaseDriver, MikroORM, Options } from 'mikro-orm';
+import {
+  Configuration,
+  IDatabaseDriver,
+  MikroORM,
+  Options
+} from '@mikro-orm/core';
 import DatabaseConnector from './database.connector';
 
 class MikroConnector<

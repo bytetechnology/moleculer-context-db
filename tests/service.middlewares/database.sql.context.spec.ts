@@ -1,5 +1,6 @@
 import { Service, ActionSchema, ServiceBroker } from 'moleculer';
 import * as uuid from 'uuid';
+
 import DatabaseContextManager from '../../src/service.middlewares/database.context';
 import MikroConnector from '../../src/service.databases/mikro.connector';
 import MoleculerMikroContext from '../../src/service.databases/moleculer.mikro.context';
@@ -10,7 +11,7 @@ describe('DatabaseContext', () => {
     let dbContextManager: DatabaseContextManager;
     let connector: MikroConnector;
     let spy: jest.SpyInstance;
-    const broker = new ServiceBroker();
+    const broker = new ServiceBroker({ logLevel: 'fatal' });
     const endpoint = {
       broker,
       id: 'ABC',
@@ -25,7 +26,6 @@ describe('DatabaseContext', () => {
         type: 'sqlite',
         dbName: ':memory:',
         entities: [TestEntity],
-        entitiesDirsTs: ['./tests/entities/sql'],
         cache: {
           enabled: false
         }
@@ -69,7 +69,9 @@ describe('DatabaseContext', () => {
         testEntity.name = testEntityName;
       });
       afterEach(async done => {
-        await connector.getORM().em.remove(TestEntity, { uuid: localUuid });
+        await connector
+          .getORM()
+          .em.nativeDelete(TestEntity, { uuid: localUuid });
         return done();
       });
       test(`all changes are made when there are no errors`, async done => {
@@ -159,7 +161,9 @@ describe('DatabaseContext', () => {
         testEntity.name = testEntityName;
       });
       afterEach(async done => {
-        await connector.getORM().em.remove(TestEntity, { uuid: localUuid });
+        await connector
+          .getORM()
+          .em.nativeDelete(TestEntity, { uuid: localUuid });
         return done();
       });
       test(`all changes are made when there are no errors`, async done => {

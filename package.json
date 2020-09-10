@@ -14,7 +14,7 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
-    "test": "jest --coverage",
+    "test": "jest --coverage --runInBand",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags"
   },
@@ -36,31 +36,37 @@
   },
   "homepage": "https://github.com/bytetechnology/moleculer-context-db#readme",
   "dependencies": {
-    "mikro-orm": "^3.6.0",
-    "moleculer": "^0.14.5",
-    "uuid": "7.0.2"
+    "@mikro-orm/core": "4.0.0",
+    "@mikro-orm/mongodb": "4.0.0",
+    "@mikro-orm/sqlite": "4.0.0",
+    "moleculer": "0.14.10",
+    "uuid": "8.3.0"
   },
   "devDependencies": {
-    "@types/jest": "25.1.4",
-    "@types/mongodb": "3.5.4",
-    "@types/node": "13.9.8",
-    "@types/uuid": "7.0.2",
-    "@typescript-eslint/eslint-plugin": "2.26.0",
-    "@typescript-eslint/parser": "2.26.0",
-    "eslint": "6.8.0",
-    "eslint-config-airbnb-base": "14.1.0",
-    "eslint-config-prettier": "6.10.1",
-    "eslint-plugin-import": "2.20.2",
-    "eslint-plugin-prettier": "3.1.2",
-    "jest": "25.2.4",
-    "moleculer-decorators": "1.2.0",
-    "mongodb": "^3.5.5",
-    "mongodb-memory-server": "^6.5.0",
-    "prettier": "2.0.2",
-    "sqlite3": "4.1.1",
-    "ts-jest": "25.3.0",
-    "ts-node": "8.8.1",
-    "typescript": "3.8.3"
+    "@types/jest": "26.0.13",
+    "@types/mongodb": "3.5.27",
+    "@types/node": "14.6.4",
+    "@types/uuid": "8.3.0",
+    "@typescript-eslint/eslint-plugin": "4.1.0",
+    "@typescript-eslint/parser": "4.1.0",
+    "eslint": "7.8.1",
+    "eslint-config-airbnb-base": "14.2.0",
+    "eslint-config-prettier": "6.11.0",
+    "eslint-plugin-import": "2.22.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "jest": "26.4.2",
+    "moleculer-decorators": "1.3.0",
+    "mongodb-memory-server": "6.7.1",
+    "prettier": "2.1.1",
+    "reflect-metadata": "0.1.13",
+    "ts-jest": "26.3.0",
+    "ts-node": "9.0.0",
+    "typescript": "4.0.2"
+  },
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "4.2.5"
+    }
   },
   "jest": {
     "testEnvironment": "node",
@@ -79,7 +85,9 @@
         "tsConfig": "./tsconfig.json"
       }
     },
-    "setupFiles": [],
+    "setupFiles": [
+      "./tests/setup.ts"
+    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",

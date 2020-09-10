@@ -1,14 +1,13 @@
 import {
   Entity,
-  MongoEntity,
   Property,
   PrimaryKey,
   SerializedPrimaryKey
-} from 'mikro-orm';
-import { ObjectId } from 'mongodb';
+} from '@mikro-orm/core';
+import { ObjectId } from '@mikro-orm/mongodb';
 
 @Entity()
-export default class TestEntity implements MongoEntity<TestEntity> {
+export default class TestEntity {
   @PrimaryKey()
   _id!: ObjectId;
 

@@ -1,6 +1,6 @@
 import moleculer from 'moleculer';
-import { EntityManager } from 'mikro-orm';
-import { MongoDriver } from 'mikro-orm/dist/drivers/MongoDriver';
+import { EntityManager } from '@mikro-orm/core';
+import { MongoDriver } from '@mikro-orm/mongodb';
 
 class MoleculerMikroContext<
   P = unknown,
