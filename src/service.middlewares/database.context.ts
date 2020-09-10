@@ -30,8 +30,6 @@ class DatabaseContextManager {
             moleculerMikroCtx.entityManager = em.fork();
             return handler(moleculerMikroCtx)
               .then((handlerResult: any) => {
-                // flush to DB
-                moleculerMikroCtx.entityManager.flush();
                 return handlerResult;
               })
               .catch((err: Error) => {
@@ -73,8 +71,6 @@ class DatabaseContextManager {
             const moleculerMikroCtx = ctx as MoleculerMikroContext;
             moleculerMikroCtx.entityManager = em.fork();
             return handler(moleculerMikroCtx).then((handlerResult: any) => {
-              // flush to DB
-              moleculerMikroCtx.entityManager.flush();
               return handlerResult;
             });
           };
