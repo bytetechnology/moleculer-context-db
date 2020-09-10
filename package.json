@@ -1,6 +1,6 @@
 {
   "name": "moleculer-context-db",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "A database tool for providing the database session as part of the context",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
