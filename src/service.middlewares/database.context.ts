@@ -1,6 +1,5 @@
 import { Middleware, Context } from 'moleculer';
 import { EntityManager } from '@mikro-orm/core';
-import { MongoDriver } from '@mikro-orm/mongodb';
 import MoleculerMikroContext from '../service.databases/moleculer.mikro.context';
 import DatabaseConnector from '../service.databases/database.connector';
 
@@ -24,8 +23,7 @@ class DatabaseContextManager {
           !dbConnector.getORM().config.get('implicitTransactions')
         ) {
           return async function wrapActionWithMongoCommit(ctx: Context) {
-            const em: EntityManager<MongoDriver> = dbConnector.getORM()
-              .em as EntityManager<MongoDriver>;
+            const { em } = dbConnector.getORM();
 
             // inject a forked EntityManager into the moleculer context
             const moleculerMikroCtx = ctx as MoleculerMikroContext;
@@ -69,8 +67,7 @@ class DatabaseContextManager {
           !dbConnector.getORM().config.get('implicitTransactions')
         ) {
           return async function wrapEventWithMongoCommit(ctx: Context) {
-            const em: EntityManager<MongoDriver> = dbConnector.getORM()
-              .em as EntityManager<MongoDriver>;
+            const { em } = dbConnector.getORM();
 
             // inject a forked EntityManager into the moleculer context
             const moleculerMikroCtx = ctx as MoleculerMikroContext;

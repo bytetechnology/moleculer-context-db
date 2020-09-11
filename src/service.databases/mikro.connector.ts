@@ -11,10 +11,12 @@ class MikroConnector<
 > extends DatabaseConnector {
   orm!: MikroORM<D>;
 
-  async init(options?: Options<D> | Configuration<D>): Promise<void | Error> {
+  async init(
+    options?: Options<D> | Configuration<D>
+  ): Promise<MikroORM | Error> {
     try {
       this.orm = await MikroORM.init<D>(options);
-      return Promise.resolve();
+      return this.orm;
     } catch (err) {
       return Promise.reject(err);
     }

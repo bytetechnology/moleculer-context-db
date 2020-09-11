@@ -1,7 +1,9 @@
 import { MikroORM } from '@mikro-orm/core';
 
-export default abstract class DatabaseConnector {
-  abstract init(options?: any): Promise<void | Error>;
+export type ORM = MikroORM;
 
-  abstract getORM(): MikroORM;
+export default abstract class DatabaseConnector {
+  abstract init(options?: any): Promise<ORM | Error>;
+
+  abstract getORM(): ORM;
 }
