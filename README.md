@@ -13,6 +13,8 @@ To install with npm
 npm install moleculer-context-db
 ```
 
+`moleculer` and `@mikro-orm/core` are peer dependecies and need to be installed separately.
+
 ### Importing
 
 ES6 style

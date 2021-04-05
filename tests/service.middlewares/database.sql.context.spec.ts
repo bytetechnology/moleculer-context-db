@@ -80,7 +80,7 @@ describe('DatabaseContext', () => {
             this: Service,
             ctx: MoleculerMikroContext
           ) {
-            ctx.entityManager.persistLater(testEntity);
+            ctx.entityManager.persist(testEntity);
             return Promise.resolve();
           } as any,
           {} as ActionSchema
@@ -107,9 +107,9 @@ describe('DatabaseContext', () => {
             this: Service,
             ctx: MoleculerMikroContext
           ) {
-            ctx.entityManager.persistLater(testEntity);
+            ctx.entityManager.persist(testEntity);
             const invalidTestEntity: TestEntity = new TestEntity();
-            ctx.entityManager.persistLater(invalidTestEntity);
+            ctx.entityManager.persist(invalidTestEntity);
             return Promise.resolve();
           } as any,
           {} as ActionSchema
@@ -132,13 +132,13 @@ describe('DatabaseContext', () => {
             this: Service,
             ctx: MoleculerMikroContext
           ) {
-            ctx.entityManager.persistLater(testEntity);
-            return Promise.reject();
+            ctx.entityManager.persist(testEntity);
+            return Promise.reject(new Error('Test Exception'));
           } as any,
           {} as ActionSchema
         );
         const mikroContext = new MoleculerMikroContext(broker, endpoint);
-        expect(transactionWrapper(mikroContext)).rejects.toThrow();
+        await expect(transactionWrapper(mikroContext)).rejects.toThrow();
 
         const fetchedTestEntity: TestEntity | null = await connector
           .getORM()
@@ -170,7 +170,7 @@ describe('DatabaseContext', () => {
             this: Service,
             ctx: MoleculerMikroContext
           ) {
-            ctx.entityManager.persistLater(testEntity);
+            ctx.entityManager.persist(testEntity);
             return Promise.resolve();
           } as any,
           {} as ActionSchema
@@ -197,9 +197,9 @@ describe('DatabaseContext', () => {
             this: Service,
             ctx: MoleculerMikroContext
           ) {
-            ctx.entityManager.persistLater(testEntity);
+            ctx.entityManager.persist(testEntity);
             const invalidTestEntity: TestEntity = new TestEntity();
-            ctx.entityManager.persistLater(invalidTestEntity);
+            ctx.entityManager.persist(invalidTestEntity);
             return Promise.resolve();
           } as any,
           {} as ActionSchema
@@ -222,14 +222,14 @@ describe('DatabaseContext', () => {
             this: Service,
             ctx: MoleculerMikroContext
           ) {
-            ctx.entityManager.persistLater(testEntity);
-            return Promise.reject();
+            ctx.entityManager.persist(testEntity);
+            return Promise.reject(new Error('Test Exception'));
           } as any,
           {} as ActionSchema
         );
         const mikroContext = new MoleculerMikroContext(broker, endpoint);
 
-        expect(transactionWrapper(mikroContext)).rejects.toThrow();
+        await expect(transactionWrapper(mikroContext)).rejects.toThrow();
 
         const fetchedTestEntity: TestEntity | null = await connector
           .getORM()
