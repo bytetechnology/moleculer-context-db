@@ -42,23 +42,22 @@ describe('DatabaseContext', () => {
       await connector.getORM().close();
       return done();
     });
-    test(`transactionWrapper() forks the entity manager
-    and starts transaction`, async done => {
-      const transactionWrapper = dbContextManager.middleware().localAction(
+    test(`contextWrapper() forks the entity manager`, async done => {
+      const contextWrapper = dbContextManager.middleware().localAction(
         async function testContextForNewEntityManager(
           this: Service,
           ctx: MoleculerMikroContext
         ) {
           expect(spy).toHaveBeenCalledTimes(1);
-          expect(ctx.entityManager.isInTransaction()).toBeTruthy();
+          expect(ctx.entityManager.isInTransaction()).toBeFalsy(); // we should not be in a transaction
           return Promise.resolve();
         } as any,
         {} as ActionSchema
       );
-      await transactionWrapper(new MoleculerMikroContext(broker, endpoint));
+      await contextWrapper(new MoleculerMikroContext(broker, endpoint));
       done();
     });
-    describe('wrapActionWithTransaction', () => {
+    describe('wrapAction', () => {
       let localUuid: string = '';
       const testEntityName = 'testing';
       const testEntity: TestEntity = new TestEntity();
@@ -75,7 +74,7 @@ describe('DatabaseContext', () => {
         return done();
       });
       test(`all changes are made when there are no errors`, async done => {
-        const transactionWrapper = dbContextManager.middleware().localAction(
+        const contextWrapper = dbContextManager.middleware().localAction(
           function testChangesArePersisted(
             this: Service,
             ctx: MoleculerMikroContext
@@ -86,7 +85,7 @@ describe('DatabaseContext', () => {
           {} as ActionSchema
         );
         try {
-          await transactionWrapper(new MoleculerMikroContext(broker, endpoint));
+          await contextWrapper(new MoleculerMikroContext(broker, endpoint));
           const localTestEntity: TestEntity | null = await connector
             .getORM()
             .em.fork()
@@ -102,7 +101,7 @@ describe('DatabaseContext', () => {
         done();
       });
       test(`no changes are made when there are invalid changes`, async done => {
-        const transactionWrapper = dbContextManager.middleware().localAction(
+        const contextWrapper = dbContextManager.middleware().localAction(
           function testChangesArePersisted(
             this: Service,
             ctx: MoleculerMikroContext
@@ -115,7 +114,7 @@ describe('DatabaseContext', () => {
           {} as ActionSchema
         );
         try {
-          await transactionWrapper(new MoleculerMikroContext(broker, endpoint));
+          await contextWrapper(new MoleculerMikroContext(broker, endpoint));
         } catch (e) {
           expect(e).toBeTruthy();
         }
@@ -127,7 +126,7 @@ describe('DatabaseContext', () => {
         done();
       });
       test(`no changes are made when the promise rejects`, async done => {
-        const transactionWrapper = dbContextManager.middleware().localAction(
+        const contextWrapper = dbContextManager.middleware().localAction(
           function testChangesArePersisted(
             this: Service,
             ctx: MoleculerMikroContext
@@ -138,7 +137,7 @@ describe('DatabaseContext', () => {
           {} as ActionSchema
         );
         const mikroContext = new MoleculerMikroContext(broker, endpoint);
-        await expect(transactionWrapper(mikroContext)).rejects.toThrow();
+        await expect(contextWrapper(mikroContext)).rejects.toThrow();
 
         const fetchedTestEntity: TestEntity | null = await connector
           .getORM()
@@ -148,7 +147,7 @@ describe('DatabaseContext', () => {
         done();
       });
     });
-    describe('wrapEventWithTransaction', () => {
+    describe('wrapEvent', () => {
       let localUuid: string = '';
       const testEntityName = 'testing';
       const testEntity: TestEntity = new TestEntity();
@@ -165,7 +164,7 @@ describe('DatabaseContext', () => {
         return done();
       });
       test(`all changes are made when there are no errors`, async done => {
-        const transactionWrapper = dbContextManager.middleware().localEvent(
+        const contextWrapper = dbContextManager.middleware().localEvent(
           function testChangesArePersisted(
             this: Service,
             ctx: MoleculerMikroContext
@@ -176,7 +175,7 @@ describe('DatabaseContext', () => {
           {} as ActionSchema
         );
         try {
-          await transactionWrapper(new MoleculerMikroContext(broker, endpoint));
+          await contextWrapper(new MoleculerMikroContext(broker, endpoint));
           const localTestEntity: TestEntity | null = await connector
             .getORM()
             .em.fork()
@@ -192,7 +191,7 @@ describe('DatabaseContext', () => {
         done();
       });
       test(`no changes are made when there are invalid changes`, async done => {
-        const transactionWrapper = dbContextManager.middleware().localEvent(
+        const contextWrapper = dbContextManager.middleware().localEvent(
           function testChangesArePersisted(
             this: Service,
             ctx: MoleculerMikroContext
@@ -205,7 +204,7 @@ describe('DatabaseContext', () => {
           {} as ActionSchema
         );
         try {
-          await transactionWrapper(new MoleculerMikroContext(broker, endpoint));
+          await contextWrapper(new MoleculerMikroContext(broker, endpoint));
         } catch (e) {
           expect(e).toBeTruthy();
         }
@@ -217,7 +216,7 @@ describe('DatabaseContext', () => {
         done();
       });
       test(`no changes are made when the promise rejects`, async done => {
-        const transactionWrapper = dbContextManager.middleware().localEvent(
+        const contextWrapper = dbContextManager.middleware().localEvent(
           function testChangesArePersisted(
             this: Service,
             ctx: MoleculerMikroContext
@@ -229,7 +228,7 @@ describe('DatabaseContext', () => {
         );
         const mikroContext = new MoleculerMikroContext(broker, endpoint);
 
-        await expect(transactionWrapper(mikroContext)).rejects.toThrow();
+        await expect(contextWrapper(mikroContext)).rejects.toThrow();
 
         const fetchedTestEntity: TestEntity | null = await connector
           .getORM()
