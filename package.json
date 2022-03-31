@@ -1,6 +1,6 @@
 {
   "name": "moleculer-context-db",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A database tool for providing the database session as part of the context",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -37,13 +37,13 @@
   },
   "homepage": "https://github.com/bytetechnology/moleculer-context-db#readme",
   "peerDependencies": {
-    "@mikro-orm/core": "^4.5.1",
+    "@mikro-orm/core": "^5.1.1",
     "moleculer": "^0.14.12"
   },
   "devDependencies": {
-    "@mikro-orm/core": "^4.5.1",
-    "@mikro-orm/mongodb": "^4.5.1",
-    "@mikro-orm/sqlite": "^4.5.1",
+    "@mikro-orm/core": "^5.1.1",
+    "@mikro-orm/mongodb": "^5.1.1",
+    "@mikro-orm/sqlite": "^5.1.1",
     "@types/jest": "^26.0.22",
     "@types/mongodb": "^3.6.12",
     "@types/node": "^14.14.37",
